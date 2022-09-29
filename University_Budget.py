@@ -24,6 +24,7 @@ def create_profile(name):
     for i in purchase_history:
         budge[char(7 + purchase_history.index(i)) + '2'] = i
     budge.column_dimensions[char(10)].width = len('Budget Balance')
+    budge.column_dimensions[char(7)].width = 11
     budget.save(f'{name}.xlsx')
 class Category:
     def __init__(self,field, file):
@@ -34,21 +35,30 @@ class Category:
         self.timestamps = []
         self.check_cells(self.field)
     # For positioning data to their respective fields
-    def field_position(self, field, rows, col=False):
+    def field_position(self, field=0, rows=0, col=False, cell=False):
         char = get_column_letter
         if field == 'income':
             if col == True:
                 return char(2) + str(rows+2)
+            elif cell == True:
+                return char(1)
             return char(1) + str(rows+2)
         elif field == 'expenses':
             if col == True:
                 return char(5) + str(rows+2)
+            elif cell == True:
+                return char(4)
             return char(4) + str(rows+2)
         else:
             if col == True:
                 return char(9) + str(rows+3)
+            elif cell == True:
+                return char(8)
             return char(8) + str(rows+3)
-
+    def adjustCells(self):
+        key_length = [len(keys) for keys in list(self.storage)]
+        key_length = max(key_length)
+        self.budge.column_dimensions[self.field_position(self.field, cell=True)].width = key_length + 2
     # For checking cells for existing data
     def check_cells(self,field):
         char = self.field_position
@@ -79,6 +89,7 @@ class Category:
         keys.append('Total')
         self.budge[char(self.field, len(keys)-1, True)] = self.storage['Total']
         self.budge[char(self.field, len(keys)-1)] = keys[len(keys)-1]
+        self.adjustCells()
         self.budget.save(f'{file}.xlsx')
 
 choice = input('Do you already have a profile? yes or no: ')
@@ -105,6 +116,5 @@ while True:
         money = input('How much was it?:')
         choice = Category('spending', file)
         choice.add_entry(description, money)
-        print(choice.timestamps)
     else:
         exit()
