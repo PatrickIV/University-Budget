@@ -67,7 +67,7 @@ class Category:
         self.storage[f'{description}'] = int(money)
         keys = list(self.storage.keys())
         if self.field == 'spending':
-            self.timestamps.append(datetime)
+            self.timestamps.append(datetime.today().strftime('%Y-%m-%d'))
         for rows in range(len(self.storage)):
             self.budge[char(self.field, rows, True)] = self.storage[keys[rows]]
             self.budge[char(self.field, rows)] = keys[rows]
